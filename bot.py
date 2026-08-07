@@ -75,7 +75,6 @@ async def on_ready():
     if not boss_alarm_check.is_running():
         boss_alarm_check.start()
 
-
 @bot.tree.command(name="setchannel", description="현재 채널을 알림 채널로 설정")
 @app_commands.checks.has_permissions(administrator=True)
 async def setchannel(interaction: discord.Interaction):
@@ -96,10 +95,7 @@ async def barrier_test(interaction: discord.Interaction):
         ephemeral=True
     )
 
-    await interaction.channel.send(
-        random.choice(CAT_MESSAGES)
-    )
-
+    await interaction.channel.send(random.choice(CAT_MESSAGES))
 
 @bot.tree.command(name="보스테스트", description="필드보스 알림 테스트")
 @app_commands.checks.has_permissions(administrator=True)
@@ -109,9 +105,7 @@ async def boss_test(interaction: discord.Interaction):
         ephemeral=True
     )
 
-    await interaction.channel.send(
-        random.choice(BOSS_MESSAGES)
-    )
+    await interaction.channel.send(random.choice(BOSS_MESSAGES))
 
 
 @tasks.loop(minutes=1)
