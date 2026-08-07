@@ -69,12 +69,12 @@ async def boss_alarm_check():
 
     channel = bot.get_channel(config["CHANNEL_ID"])
 
- if channel:
-    message = random.choice(BOSS_MESSAGES)
-    await channel.send(message)
-    sent_boss_alarm.append(alarm_hour)
+    if channel:
+        message = random.choice(BOSS_MESSAGES)
+        await channel.send(message)
+        sent_boss_alarm.append(alarm_hour)
 
-print("필드보스 체크 실행됨", now)
+    print("필드보스 체크 실행됨", now)
 
     # 날짜 변경 시 초기화
     if now.hour == 0 and now.minute == 0:
