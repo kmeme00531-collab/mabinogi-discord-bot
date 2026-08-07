@@ -83,4 +83,4 @@ async def barrier_alarm():
     await channel.send(random.choice(CAT_MESSAGES))
 
 
-bot.run(config["TOKEN"])
+bot.run(os.getenv("TOKEN"))
