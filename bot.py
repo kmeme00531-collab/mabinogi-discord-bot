@@ -93,6 +93,30 @@ async def setchannel(interaction: discord.Interaction):
         ephemeral=True
     )
 
+@bot.tree.command(name="결계테스트", description="결계 알림 테스트")
+@app_commands.checks.has_permissions(administrator=True)
+async def barrier_test(interaction: discord.Interaction):
+    await interaction.response.send_message(
+        "✅ 결계 테스트를 전송했습니다.",
+        ephemeral=True
+    )
+
+    await interaction.channel.send(random.choice(CAT_MESSAGES))
+
+
+@bot.tree.command(name="보스테스트", description="필드보스 알림 테스트")
+@app_commands.checks.has_permissions(administrator=True)
+async def boss_test(interaction: discord.Interaction):
+    await interaction.response.send_message(
+        "✅ 필드보스 테스트를 전송했습니다.",
+        ephemeral=True
+    )
+
+    now = datetime.now(ZoneInfo("Asia/Seoul"))
+    alarm_hour = now.hour
+
+    message = random.choice(BOSS_MESSAGES).format(alarm_hour=alarm_hour)
+    await interaction.channel.send(message)
 
 @tasks.loop(minutes=1)
 async def barrier_alarm():
