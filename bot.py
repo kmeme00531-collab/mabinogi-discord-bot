@@ -118,7 +118,13 @@ async def on_ready():
 async def setchannel(interaction: discord.Interaction):
     config["CHANNEL_ID"] = interaction.channel.id
     save_config(config)
-    await interaction.response.send_message("✅ 알림 채널이 설정되었습니다.", ephemeral=True)
+
+    print(config)   # ← 이 한 줄 추가
+
+    await interaction.response.send_message(
+        "✅ 알림 채널이 설정되었습니다.",
+        ephemeral=True
+    )
 
 
 @tasks.loop(minutes=1)
