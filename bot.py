@@ -86,7 +86,9 @@ async def setchannel(interaction: discord.Interaction):
         "✅ 알림 채널이 설정되었습니다.",
         ephemeral=True
     )
-    @bot.tree.command(name="결계테스트", description="결계 알림 테스트")
+
+
+@bot.tree.command(name="결계테스트", description="결계 알림 테스트")
 @app_commands.checks.has_permissions(administrator=True)
 async def barrier_test(interaction: discord.Interaction):
     await interaction.response.send_message(
@@ -110,7 +112,6 @@ async def boss_test(interaction: discord.Interaction):
     await interaction.channel.send(
         random.choice(BOSS_MESSAGES)
     )
-
 
 @tasks.loop(minutes=1)
 async def barrier_alarm():
