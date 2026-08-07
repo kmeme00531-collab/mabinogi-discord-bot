@@ -1,12 +1,13 @@
-import discord
-from discord.ext import commands, tasks
-from discord import app_commands
-from datetime import datetime
-from zoneinfo import ZoneInfo
+import os
 import json
 import random
 import logging
-import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+import discord
+from discord.ext import commands, tasks
+from discord import app_commands
 
 logging.basicConfig(level=logging.INFO)
 
@@ -20,7 +21,7 @@ CAT_MESSAGES = [
     "😺 흠냐옹~ 결계 조심히 다녀오라옹~",
     "🎁 보상이 받고 싶냐옹? 자, 받으라옹… 내 결계 알림~",
     "😺 킁킁… 결계 냄새가 츄르보다 더 진하게 난다옹. 얼른 가보라옹~",
-    "😼 야옹~ 아직도 여기 있냐옹…? 결계나 빨리 가라옹~",
+    "😺 야옹~ 아직도 여기 있냐옹…? 결계나 빨리 가라옹~",
     "😺 결계는 기다려주지 않는다옹~",
     "🍀 자, 결계로 출발하라옹~ 행운을 빌어주겠다옹~ (꾸욱 꾹~)"
 ]
@@ -28,9 +29,9 @@ CAT_MESSAGES = [
 BOSS_TIMES = [12, 18, 20, 22]
 
 BOSS_MESSAGES = [
-    "😺 킁킁… 강한 기운이 느껴진다옹. 5분 뒤 {alarm_hour}:00 필드보스가 나타난다옹~"
+    "😺 킁킁… 강한 기운이 느껴진다옹. 5분 뒤 {alarm_hour}:00 필드보스가 나타난다옹~",
     "🐱 야옹~ 슬슬 움직여야 할 시간이다옹… 필드보스를 해치우러 가라옹~",
-    "😼 흠냐옹~ 필드보스가 곧 깨어난다옹~",
+    "😺 흠냐옹~ 필드보스가 곧 깨어난다옹~",
     "🍚 냐옹~ 밥은 놓쳐도 필드보스는 챙기라옹~",
     "😺 어서 준비하라옹~ 꾸물대다 필드보스를 놓친다옹~",
     "🗡️ 냐옹~ 무기는 챙겼냐옹? 이제 필드보스를 치러 출발하라옹~",
@@ -60,14 +61,12 @@ def save_config(data):
 config = load_config()
 
 intents = discord.Intents.default()
-
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-
     print(f"{bot.user} 로그인 완료")
 
     if not barrier_alarm.is_running():
@@ -77,27 +76,23 @@ async def on_ready():
         boss_alarm_check.start()
 
 
-@bot.tree.command(
-    name="setchannel",
-    description="현재 채널을 알림 채널로 설정"
-)
+@bot.tree.command(name="setchannel", description="현재 채널을 알림 채널로 설정")
 @app_commands.checks.has_permissions(administrator=True)
 async def setchannel(interaction: discord.Interaction):
     config["CHANNEL_ID"] = interaction.channel.id
     save_config(config)
-
-    print(config)
 
     await interaction.response.send_message(
         "✅ 알림 채널이 설정되었습니다.",
         ephemeral=True
     )
 
+
 @bot.tree.command(name="결계테스트", description="결계 알림 테스트")
 @app_commands.checks.has_permissions(administrator=True)
 async def barrier_test(interaction: discord.Interaction):
     await interaction.response.send_message(
-        "✅ 결계 테스트를 전송했습니다.",
+        "✅ 결계 테스트를 보냈습니다.",
         ephemeral=True
     )
 
@@ -107,16 +102,16 @@ async def barrier_test(interaction: discord.Interaction):
 @bot.tree.command(name="보스테스트", description="필드보스 알림 테스트")
 @app_commands.checks.has_permissions(administrator=True)
 async def boss_test(interaction: discord.Interaction):
+    now = datetime.now(ZoneInfo("Asia/Seoul"))
+
     await interaction.response.send_message(
-        "✅ 필드보스 테스트를 전송했습니다.",
+        "✅ 필드보스 테스트를 보냈습니다.",
         ephemeral=True
     )
 
-    now = datetime.now(ZoneInfo("Asia/Seoul"))
-    alarm_hour = now.hour
-
-    message = random.choice(BOSS_MESSAGES).format(alarm_hour=alarm_hour)
+    message = random.choice(BOSS_MESSAGES).format(alarm_hour=now.hour)
     await interaction.channel.send(message)
+
 
 @tasks.loop(minutes=1)
 async def barrier_alarm():
@@ -136,14 +131,13 @@ async def barrier_alarm():
     if channel is None:
         return
 
-await channel.send(random.choice(CAT_MESSAGES))
+    await channel.send(random.choice(CAT_MESSAGES))
 
 
 @tasks.loop(seconds=30)
 async def boss_alarm_check():
     now = datetime.now(ZoneInfo("Asia/Seoul"))
 
-    # 55분에만 체크 (보스 5분 전)
     if now.minute != 55:
         return
 
@@ -165,12 +159,14 @@ async def boss_alarm_check():
     if channel is None:
         return
 
-message = random.choice(BOSS_MESSAGES).format(alarm_hour=alarm_hour)
-await channel.send(message)
+    message = random.choice(BOSS_MESSAGES).format(alarm_hour=alarm_hour)
+    await channel.send(message)
 
-sent_boss_alarm.append(alarm_hour)
+    sent_boss_alarm.append(alarm_hour)
+    print("필드보스 알림 전송:", alarm_hour)
 
-print("필드보스 알림 전송:", alarm_hour)
+    if now.hour == 0 and now.minute == 0:
+        sent_boss_alarm.clear()
 
 
 bot.run(os.getenv("TOKEN"))
