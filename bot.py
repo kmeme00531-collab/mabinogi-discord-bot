@@ -102,15 +102,13 @@ async def barrier_test(interaction: discord.Interaction):
 @bot.tree.command(name="보스테스트", description="필드보스 알림 테스트")
 @app_commands.checks.has_permissions(administrator=True)
 async def boss_test(interaction: discord.Interaction):
-    now = datetime.now(ZoneInfo("Asia/Seoul"))
 
-    await interaction.response.send_message(
-        "✅ 필드보스 테스트를 보냈습니다.",
-        ephemeral=True
-    )
+await interaction.response.send_message(
+    "✅ 필드보스 테스트를 보냈습니다.",
+    ephemeral=True
+)
 
-    message = random.choice(BOSS_MESSAGES).format(alarm_hour=now.hour)
-    await interaction.channel.send(message)
+await interaction.channel.send(random.choice(BOSS_MESSAGES))
 
 
 @tasks.loop(minutes=1)
