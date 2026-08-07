@@ -75,6 +75,7 @@ async def on_ready():
     if not boss_alarm_check.is_running():
         boss_alarm_check.start()
 
+
 @bot.tree.command(name="setchannel", description="현재 채널을 알림 채널로 설정")
 @app_commands.checks.has_permissions(administrator=True)
 async def setchannel(interaction: discord.Interaction):
@@ -85,9 +86,7 @@ async def setchannel(interaction: discord.Interaction):
         "✅ 알림 채널이 설정되었습니다.",
         ephemeral=True
     )
-
-
-@bot.tree.command(name="결계테스트", description="결계 알림 테스트")
+    @bot.tree.command(name="결계테스트", description="결계 알림 테스트")
 @app_commands.checks.has_permissions(administrator=True)
 async def barrier_test(interaction: discord.Interaction):
     await interaction.response.send_message(
@@ -95,7 +94,10 @@ async def barrier_test(interaction: discord.Interaction):
         ephemeral=True
     )
 
-    await interaction.channel.send(random.choice(CAT_MESSAGES))
+    await interaction.channel.send(
+        random.choice(CAT_MESSAGES)
+    )
+
 
 @bot.tree.command(name="보스테스트", description="필드보스 알림 테스트")
 @app_commands.checks.has_permissions(administrator=True)
@@ -105,13 +107,14 @@ async def boss_test(interaction: discord.Interaction):
         ephemeral=True
     )
 
-    await interaction.channel.send(random.choice(BOSS_MESSAGES))
+    await interaction.channel.send(
+        random.choice(BOSS_MESSAGES)
+    )
 
 
 @tasks.loop(minutes=1)
 async def barrier_alarm():
     now = datetime.now(ZoneInfo("Asia/Seoul"))
-    print("결계 체크", now)
 
     if now.minute != 0:
         return
@@ -157,7 +160,7 @@ async def boss_alarm_check():
     await channel.send(random.choice(BOSS_MESSAGES))
 
     sent_boss_alarm.append(alarm_hour)
-    print("필드보스 알림 전송:", alarm_hour)
+    print(f"필드보스 알림 전송: {alarm_hour}")
 
     if now.hour == 0 and now.minute == 0:
         sent_boss_alarm.clear()
